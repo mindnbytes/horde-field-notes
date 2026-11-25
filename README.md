@@ -21,9 +21,9 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 Open <http://127.0.0.1:8000/>. No package install or build needed. If port 8000 is in use, choose another.
 
-## Initial slice
+## Current slice
 
-Rogue quest weapon with prerequisites; one real Protection Paladin gear bracket; a 50–60 checklist for both; one usable example per profession. This is a prototype, not complete 20–60 coverage. Add guide content after the interaction proves useful.
+The Rogue now has a full Combat 20–60 gear route with 20–29, 30–39 and 40–49 brackets, a short before-you-start note, and a 50–60 Road to 60 checklist. Protection Paladin and the two professions remain first-slice examples. This is still a prototype for the other guides, not complete coverage everywhere.
 
 Future content ideas are tracked in [the backlog](docs/backlog.md).
 

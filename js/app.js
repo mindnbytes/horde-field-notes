@@ -49,6 +49,18 @@
     return Object.prototype.hasOwnProperty.call(DATA, guideId);
   }
 
+  function findItem(guide, itemId) {
+    var items = guide.items || [];
+
+    for (var index = 0; index < items.length; index += 1) {
+      if (items[index].id === itemId) {
+        return items[index];
+      }
+    }
+
+    return null;
+  }
+
   function parseRoute() {
     var raw = window.location.hash.replace(/^#\/?/, "").trim();
 
@@ -71,14 +83,18 @@
     }
 
     if (sub === "road" && guide.road) {
-      return { guideId: guideId, view: "road", itemId: null };
+      var roadItemId = parts[2] || null;
+
+      if (roadItemId && !findItem(guide, roadItemId)) {
+        return { guideId: guideId, view: "gear", itemId: null, invalid: true };
+      }
+
+      return { guideId: guideId, view: "road", itemId: roadItemId };
     }
 
-    var isItem = (guide.items || []).some(function (item) {
-      return item.id === sub;
-    });
+    var selectedItem = findItem(guide, sub);
 
-    if (isItem) {
+    if (selectedItem) {
       return { guideId: guideId, view: "gear", itemId: sub };
     }
 
@@ -87,7 +103,7 @@
 
   function routeHash(route) {
     if (route.view === "road") {
-      return "#/" + route.guideId + "/road";
+      return "#/" + route.guideId + "/road" + (route.itemId ? "/" + route.itemId : "");
     }
     if (route.itemId) {
       return "#/" + route.guideId + "/" + route.itemId;
@@ -175,6 +191,7 @@
     document.title = viewLabel + " · Horde Field Notes";
 
     bindItems();
+    bindBracketJump();
 
     if (options.scrollTop) {
       window.scrollTo(0, 0);
@@ -220,14 +237,130 @@
   function renderGearView(guide) {
     return (
       headHtml(guide, "gear", guide.title, guide.lede) +
+      notesHtml(guide) +
+      renderGearItems(guide) +
+      (guide.road ? roadCallout(guide) : "")
+    );
+  }
+
+  function notesHtml(guide) {
+    if (!guide.notes || !guide.notes.length) {
+      return "";
+    }
+
+    return (
+      '<section class="guide-notes" aria-labelledby="notes-heading">' +
+        '<h2 class="notes-heading" id="notes-heading">' + escapeHtml(guide.notesTitle || "Before you start") + "</h2>" +
+        '<div class="note-list">' +
+          guide.notes.map(function (note) {
+            return (
+              '<div class="guide-note">' +
+                '<h3 class="note-title">' + escapeHtml(note.title) + "</h3>" +
+                '<p class="note-text">' + escapeHtml(note.text) + "</p>" +
+                (note.links && note.links.length
+                  ? '<div class="source-links road-links">' + linkList(note.links) + "</div>"
+                  : "") +
+              "</div>"
+            );
+          }).join("") +
+        "</div>" +
+      "</section>"
+    );
+  }
+
+  function renderGearItems(guide) {
+    if (guide.brackets && guide.brackets.length) {
+      var bracketSections = renderBracketSections(guide);
+
+      if (bracketSections) {
+        return bracketSections;
+      }
+    }
+
+    return (
       '<section class="content-section" aria-labelledby="gear-heading">' +
         '<div class="section-head">' +
           '<h2 id="gear-heading">' + escapeHtml(guide.sectionTitle || "Gear") + "</h2>" +
-          '<p class="interaction-hint">Hover or focus for local stats. Click, tap, or press Enter for acquisition notes.</p>' +
+          interactionHintHtml() +
         "</div>" +
-        '<div class="item-list">' + guide.items.map(renderItem).join("") + "</div>" +
-      "</section>" +
-      (guide.road ? roadCallout(guide) : "")
+        '<div class="item-list">' +
+          (guide.items || []).map(function (item) { return renderItem(item); }).join("") +
+        "</div>" +
+      "</section>"
+    );
+  }
+
+  function interactionHintHtml() {
+    return '<p class="interaction-hint">Hover or focus for local stats. Click, tap, or press Enter for acquisition notes.</p>';
+  }
+
+  // Optional gear grouping: guide.brackets = [{ id, label, note? }], with each
+  // item opting in through bracketId. Guides without brackets keep the flat list.
+  function renderBracketSections(guide) {
+    var sections = guide.brackets.map(function (bracket) {
+      var items = (guide.items || []).filter(function (item) {
+        return item.bracketId === bracket.id;
+      });
+
+      if (!items.length) {
+        return "";
+      }
+
+      var bracketId = escapeHtml(bracket.id);
+
+      return (
+        '<section class="level-bracket" id="bracket-' + bracketId + '" aria-labelledby="bracket-title-' + bracketId + '">' +
+          '<div class="bracket-head">' +
+            '<h3 class="bracket-title" id="bracket-title-' + bracketId + '" tabindex="-1">' + escapeHtml(bracket.label) + "</h3>" +
+            (bracket.note ? '<p class="bracket-note">' + escapeHtml(bracket.note) + "</p>" : "") +
+          "</div>" +
+          '<div class="item-list">' +
+            items.map(function (item) { return renderItem(item, "h4"); }).join("") +
+          "</div>" +
+        "</section>"
+      );
+    }).filter(Boolean);
+
+    if (!sections.length) {
+      return "";
+    }
+
+    return (
+      '<section class="content-section" aria-labelledby="gear-heading">' +
+        '<div class="section-head">' +
+          '<h2 id="gear-heading">' + escapeHtml(guide.sectionTitle || "Gear") + "</h2>" +
+          interactionHintHtml() +
+        "</div>" +
+        bracketJumpHtml(guide.brackets, guide.items || []) +
+        sections.join("") +
+      "</section>"
+    );
+  }
+
+  function bracketJumpHtml(brackets, items) {
+    var targets = brackets.filter(function (bracket) {
+      return items.some(function (item) {
+        return item.bracketId === bracket.id;
+      });
+    });
+
+    if (targets.length < 2) {
+      return "";
+    }
+
+    return (
+      '<nav class="bracket-jump" aria-label="Jump to a level bracket">' +
+        '<span class="bracket-jump-label">Jump to</span>' +
+        targets.map(function (bracket) {
+          var bracketId = escapeHtml(bracket.id);
+
+          return (
+            '<button class="chip chip--jump" type="button" data-bracket-jump="' + bracketId + '" aria-controls="bracket-' + bracketId + '">' +
+              escapeHtml(bracket.label) +
+            "</button>"
+          );
+        }).join("") +
+      "</nav>"
     );
   }
 
@@ -253,6 +386,16 @@
   }
 
   function renderRoadEntry(entry) {
+    // A road entry can name a gear item: { itemId: "thrash-blade" }. The shared
+    // item card supplies the stats, acquisition notes and local preview.
+    if (entry.itemId) {
+      var item = itemsById.get(entry.itemId);
+
+      if (item) {
+        return '<li class="road-entry road-entry--item">' + renderItem(item) + "</li>";
+      }
+    }
+
     return (
       '<li class="road-entry">' +
         "<h3>" + escapeHtml(entry.title) + "</h3>" +
@@ -265,7 +408,8 @@
     );
   }
 
-  function renderItem(item) {
+  function renderItem(item, headingTag) {
+    var tag = headingTag || "h3";
     var chips = '<span class="chip chip--bracket">' + escapeHtml(item.bracket) + "</span>";
 
     (item.chips || []).forEach(function (chip) {
@@ -274,7 +418,7 @@
 
     return (
       '<article class="item" id="item-' + escapeHtml(item.id) + '" data-item-id="' + escapeHtml(item.id) + '">' +
-        '<h3 class="item-heading">' +
+        "<" + tag + ' class="item-heading">' +
           '<button class="item-toggle" type="button" aria-expanded="false" aria-controls="details-' + escapeHtml(item.id) + '" data-item="' + escapeHtml(item.id) + '">' +
             '<span class="item-top">' +
               '<span class="item-name">' + escapeHtml(item.name) + "</span>" +
@@ -284,7 +428,7 @@
             '<span class="item-line item-line--why"><span class="row-label">Why</span><span>' + escapeHtml(item.reason) + "</span></span>" +
             '<span class="item-action"><span class="item-action-label">View details</span><span class="chev" aria-hidden="true"></span></span>' +
           "</button>" +
-        "</h3>" +
+        "</" + tag + ">" +
         '<div class="item-details" id="details-' + escapeHtml(item.id) + '" hidden>' + renderDetails(item) + "</div>" +
       "</article>"
     );
@@ -445,6 +589,25 @@
     });
   }
 
+  function bindBracketJump() {
+    Array.prototype.forEach.call(mainEl.querySelectorAll("[data-bracket-jump]"), function (button) {
+      button.addEventListener("click", function () {
+        var section = document.getElementById("bracket-" + button.dataset.bracketJump);
+
+        if (!section) {
+          return;
+        }
+
+        section.scrollIntoView({ block: "start" });
+
+        var heading = section.querySelector(".bracket-title");
+        if (heading) {
+          heading.focus({ preventScroll: true });
+        }
+      });
+    });
+  }
+
   function toggleItem(article) {
     if (!article) {
       return;
@@ -492,10 +655,10 @@
     }
 
     if (options.updateHash !== false && currentRoute) {
-      var guideHash = "#/" + currentRoute.guideId;
+      var baseHash = "#/" + currentRoute.guideId + (currentRoute.view === "road" ? "/road" : "");
 
       if (open) {
-        var itemHash = guideHash + "/" + article.dataset.itemId;
+        var itemHash = baseHash + "/" + article.dataset.itemId;
 
         if (currentRoute.itemId) {
           replaceHash(itemHash);
@@ -510,7 +673,7 @@
           // of adding a second identical guide entry for Back to land on.
           window.history.back();
         } else {
-          replaceHash(guideHash);
+          replaceHash(baseHash);
         }
         currentRoute.itemId = null;
       }

@@ -268,6 +268,50 @@ a:hover {
   color: var(--ink);
 }
 
+/* Guide notes */
+
+.guide-notes {
+  max-width: 78ch;
+  margin-top: 22px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.notes-heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.note-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.guide-note {
+  max-width: 72ch;
+}
+
+.note-title {
+  margin: 0 0 3px;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.note-text {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.82rem;
+}
+
+.guide-note .source-links {
+  margin-top: 8px;
+}
+
 /* Gear section */
 
 .content-section {
@@ -300,6 +344,63 @@ a:hover {
 .item-list {
   display: grid;
   gap: 10px;
+}
+
+.bracket-jump {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 16px;
+}
+
+.bracket-jump-label {
+  margin-right: 2px;
+  color: var(--ink-dim);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.chip--jump {
+  min-height: 30px;
+  padding: 4px 10px;
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.chip--jump:hover {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+.level-bracket {
+  scroll-margin-top: 16px;
+}
+
+.level-bracket + .level-bracket {
+  margin-top: 22px;
+}
+
+.bracket-head {
+  margin-bottom: 10px;
+}
+
+.bracket-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  font-weight: 600;
+}
+
+.bracket-note {
+  margin: 2px 0 0;
+  color: var(--ink-dim);
+  font-size: 0.76rem;
 }
 
 .item {
@@ -729,6 +830,16 @@ a:hover {
 .road-entry:first-child {
   padding-top: 0;
   border-top: 0;
+}
+
+.road-entry--item {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.road-entry--item .item-heading {
+  margin: 0;
+  font: inherit;
 }
 
 .road-entry h3 {
