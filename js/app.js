@@ -634,7 +634,7 @@
     }
 
     return (
-      '<nav class="bracket-jump" aria-label="Jump to a level bracket">' +
+      '<nav class="bracket-jump" aria-label="Jump to a bracket">' +
         '<span class="bracket-jump-label">Jump to</span>' +
         targets.map(function (bracket) {
           var bracketId = escapeHtml(bracket.id);

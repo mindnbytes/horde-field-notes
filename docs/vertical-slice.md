@@ -2,7 +2,7 @@
 
 ## Acceptance
 
-1. Default to Combat Rogue. Paladin defaults to Retribution and offers Protection as a neighboring native-link spec switch, not a fake tab widget. Switch among Rogue, Paladin, Blacksmithing and Enchanting using linkable navigation. Browser Back and pasted item links should land on the matching tab/entry, including legacy `#/paladin/road` and `#/paladin/<item>` links. Use a short prototype scope note rather than empty specs.
+1. Default to Combat Rogue. Paladin defaults to Retribution and offers Protection as a neighboring native-link spec switch, not a fake tab widget. Switch among Rogue, Paladin, Blacksmithing, Enchanting and Tailoring using linkable navigation. Browser Back and pasted item links should land on the matching tab/entry, including legacy `#/paladin/road` and `#/paladin/<item>` links. Use a short prototype scope note rather than empty specs.
 2. An item row shows name, suggested bracket, source and short reason to pursue. Hover **or keyboard focus** on the item control shows a compact local stats preview; click/tap and Enter/Space open persistent details with the stats and actionable acquisition notes. Keep hover/focus usable without trapping focus, and dismiss its transient preview with Escape. No stale overlay when changing tab. Icons/colors aren’t the only cues.
 3. On a 375px screen, no page horizontal overflow, all details and source links work by tap, and a desktop keyboard user can do everything without a mouse. No external runtime dependency. Relative links/assets must work on a GitHub Pages project path.
 4. Both classes have a clearly separate, directly reachable **Road to 60** checklist; use Do first / If you’re already there / Skip. Professions show skill versus character level and costs distinctly.
@@ -21,5 +21,7 @@
 Item numbers checked against Forever tooltip data on Nov 25, 2026.
 
 ## Review checklist
+
+Enchanting and Tailoring expose a Gold-making section with clear test-now/watch-later choices, skill gates, output, buyer/use case, materials/recipe sources, and skip/break-even cautions. These are realm hypotheses, not sales guarantees; favor customer materials and one commission/craft before speculative stock. No unsupported Auction House/vellum claims.
 
 Run local HTTP, open the default route and one direct item URL, try hover, keyboard focus/Enter/Escape, mobile tap, each tab, the Paladin spec switch, back navigation, and both Road to 60 links. Also try `#/paladin/road` and a legacy `#/paladin/<item>` link. Open the Protection readiness link and its direct URL, check heading focus and current view on navigation, and confirm Retribution does not show the readiness link. Inspect narrow width, console errors and clickable source links. Check the seed names/stats against the links or this brief. No dependency on a specific testing framework.
