@@ -87,7 +87,7 @@
   // routing hints) always come from the guide so routes stay stable.
   var SPEC_OWNED_FIELDS = [
     "kicker", "title", "lede", "scope", "sectionTitle",
-    "notes", "notesTitle", "brackets", "items", "road", "placeholder"
+    "notes", "notesTitle", "brackets", "items", "road", "readiness", "placeholder"
   ];
 
   function guideForSpec(guide, specId) {
@@ -190,6 +190,10 @@
           view: "road",
           itemId: roadItem
         };
+      }
+
+      if (sub === "readiness" && spec.readiness && !parts[2]) {
+        return { guideId: guideId, specId: spec.id, explicitSpec: true, view: "readiness", itemId: null };
       }
 
       if (!parts[2] && findItem(spec, sub)) {
@@ -339,6 +343,9 @@
     if (route.view === "road") {
       return guideRoadHash(guide, route) + (route.itemId ? "/" + route.itemId : "");
     }
+    if (route.view === "readiness") {
+      return guideGearHash(guide, route) + "/readiness";
+    }
     if (route.itemId) {
       return guideItemHash(guide, route, route.itemId);
     }
@@ -419,11 +426,12 @@
     syncNav(route.guideId);
 
     var isRoad = route.view === "road";
-    var viewLabel = isRoad ? currentGuide.title + " · " + currentGuide.road.title : currentGuide.title;
+    var isReadiness = route.view === "readiness";
+    var viewLabel = isRoad ? currentGuide.title + " · " + currentGuide.road.title :
+      (isReadiness ? currentGuide.title + " · " + currentGuide.readiness.title : currentGuide.title);
 
-    mainEl.innerHTML = isRoad
-      ? renderRoadView(currentGuide, route)
-      : renderGearView(currentGuide, route);
+    mainEl.innerHTML = isRoad ? renderRoadView(currentGuide, route) :
+      (isReadiness ? renderReadinessView(currentGuide, route) : renderGearView(currentGuide, route));
     document.title = viewLabel + " · Horde Field Notes";
 
     bindItems();
@@ -457,7 +465,7 @@
         '<p class="lede">' + escapeHtml(lede) + "</p>" +
         '<p class="scope"><span class="scope-label">Scope</span>' + escapeHtml(guide.scope) + "</p>" +
         (guide.specs && guide.specs.length ? specNavHtml(guide, route) : "") +
-        (guide.road ? subnavHtml(guide, route) : "") +
+        (guide.road || guide.readiness ? subnavHtml(guide, route) : "") +
       "</div>"
     );
   }
@@ -492,7 +500,8 @@
     return (
       '<nav class="subnav" aria-label="' + escapeHtml(guide.navLabel || guide.title) + ' views">' +
         '<a href="' + escapeHtml(gearHash) + '"' + (route.view === "gear" ? ' aria-current="page"' : "") + ">Gear</a>" +
-        '<a href="' + escapeHtml(roadHash) + '"' + (route.view === "road" ? ' aria-current="page"' : "") + ">Road to 60</a>" +
+        (guide.road ? '<a href="' + escapeHtml(roadHash) + '"' + (route.view === "road" ? ' aria-current="page"' : "") + ">Road to 60</a>" : "") +
+        (guide.readiness ? '<a href="' + escapeHtml(gearHash) + '/readiness"' + (route.view === "readiness" ? ' aria-current="page"' : "") + ">Tank readiness</a>" : "") +
       "</nav>"
     );
   }
@@ -645,6 +654,24 @@
       headHtml(guide, route, guide.road.title, guide.road.intro) +
       '<div class="road-groups">' + guide.road.groups.map(renderRoadGroup).join("") + "</div>"
     );
+  }
+
+  function renderReadinessView(guide, route) {
+    var readiness = guide.readiness;
+    return headHtml(guide, route, readiness.title, readiness.intro) +
+      '<div class="road-groups">' + readiness.groups.map(function (group) {
+        return '<section class="road-group" aria-labelledby="readiness-' + escapeHtml(group.id) + '">' +
+          '<div class="road-group-head"><h2 id="readiness-' + escapeHtml(group.id) + '">' + escapeHtml(group.label) + '</h2>' +
+          '<p class="road-hint">' + escapeHtml(group.priority) + '</p></div>' +
+          '<p class="road-text">' + escapeHtml(group.detail) + '</p></section>';
+      }).join("") +
+      '<section class="road-group" aria-labelledby="readiness-reading"><div class="road-group-head">' +
+      '<h2 id="readiness-reading">Read the sheet: an example</h2></div>' +
+      '<p class="road-text">' + escapeHtml(readiness.example) + '</p></section>' +
+      '<section class="road-group" aria-labelledby="readiness-sources"><div class="road-group-head">' +
+      '<h2 id="readiness-sources">Mechanics and sources</h2></div>' +
+      '<p class="road-text">' + escapeHtml(readiness.mechanics) + '</p><div class="source-links">' +
+      linkList(readiness.links) + '</div></section></div>';
   }
 
   function renderRoadGroup(group) {

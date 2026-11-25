@@ -23,7 +23,7 @@ Open <http://127.0.0.1:8000/>. No package install or build needed. If port 8000 
 
 ## Current slice
 
-The Rogue now has a full Combat 20–60 gear route with 20–29, 30–39 and 40–49 brackets, a short before-you-start note, and a 50–60 Road to 60 checklist. Paladin is now dual spec: Retribution is the default and both it and Protection have 20–29, 30–39 and 40–49 gear cards plus their own 50–60 Road to 60 checklist. The two professions remain first-slice examples. This is still a prototype for the other guides, not complete coverage everywhere.
+The Rogue now has a full Combat 20–60 gear route with 20–29, 30–39 and 40–49 brackets, a short before-you-start note, and a 50–60 Road to 60 checklist. Paladin is dual spec: Retribution is the default and both specs have gear cards and a Road to 60 checklist. Protection also has a separately linkable, qualitative Tank readiness reference at `#/paladin/protection/readiness`; it is not a calculator or an encounter guarantee. The two professions remain first-slice examples. This is still a prototype for the other guides, not complete coverage everywhere.
 
 ## Content data
 
@@ -55,7 +55,7 @@ window.HORDE_FIELD_NOTES.paladin = {
 };
 ```
 
-Each spec owns its `kicker`, `title`, `lede`, `scope`, `sectionTitle`, `notes`, `notesTitle`, `brackets`, `items`, `road` and `placeholder`. The guide keeps `id`, `navLabel`, `navDetail`, `specs`, `defaultSpec` and `legacyRoadSpec`, so routes stay stable when content moves between specs. Routes are `#/<guide>` for the default spec's gear, `#/<guide>/<spec>` for another spec, `#/<guide>/<spec>/road[/<item>]` for a checklist, and `#/<guide>/<spec>/<item>` for an entry. Older links to `#/paladin/<item>` and `#/paladin/road` are resolved to the owning spec and rewritten in the address bar.
+Each spec owns its `kicker`, `title`, `lede`, `scope`, `sectionTitle`, `notes`, `notesTitle`, `brackets`, `items`, `road`, optional `readiness` view and `placeholder`. The guide keeps `id`, `navLabel`, `navDetail`, `specs`, `defaultSpec` and `legacyRoadSpec`, so routes stay stable when content moves between specs. Routes are `#/<guide>` for the default spec's gear, `#/<guide>/<spec>` for another spec, `#/<guide>/<spec>/road[/<item>]` for a checklist, and `#/<guide>/<spec>/<item>` for an entry. Older links to `#/paladin/<item>` and `#/paladin/road` are resolved to the owning spec and rewritten in the address bar.
 
 Future content ideas are tracked in [the backlog](docs/backlog.md).
 

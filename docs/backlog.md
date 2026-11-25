@@ -2,14 +2,9 @@
 
 ## Protection Paladin: tank readiness by content
 
-Add a short, directly linkable **Tank readiness** reference under Protection Paladin. Answer “Am I geared enough for this?” separately for **leveling dungeons**, **level-60 dungeons**, and **raid bosses**. Keep it next to the gear route, not mixed into every item row.
+Implemented as `#/paladin/protection/readiness`, adjacent to Gear and Road to 60. It covers **leveling dungeons**, **level-60 dungeons**, and **raid bosses**, with a character-sheet example and separate notes on temporary block.
 
-- Give a simple priority for each setting: shield/armor, Stamina, Defense, block chance and block value, and where Intellect or spell power matter for mana and threat. Distinguish useful upgrades from a required threshold.
-- Explain **uncrittable vs. uncrushable** in plain language. Show which enemies can crit or crush, how the target depends on attacker level, and whether the relevant threshold is practical or necessary for that setting.
-- Separate permanent character-sheet values from temporary coverage such as **Holy Shield** and **Redoubt**. Check uptime and charge limits before implying a buff makes you safe throughout a fight.
-- Verify the actual **WoW Forever** rules and use the in-game units (Defense skill vs. rating, percentage points vs. rating). Don’t copy Classic or TBC thresholds without checking. Note the patch/source and any encounter exceptions or uncertainty.
-
-Suggested format: three compact rows (**content / what to aim for / when it matters**) and one worked example for reading a character sheet. No calculator in the first pass.
+Follow-up only when stronger Forever evidence is available: document which encounters can crit or crush, whether a crush threshold is sustainable for Protection, and any encounter-specific exceptions. The patch 1.60.1 guides cite 440 Defense skill against level-63 melee crits as a gearing target, not a universal requirement.
 
 ## Tailoring and profession gold-making
 

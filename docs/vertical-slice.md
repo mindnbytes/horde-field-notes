@@ -7,6 +7,7 @@
 3. On a 375px screen, no page horizontal overflow, all details and source links work by tap, and a desktop keyboard user can do everything without a mouse. No external runtime dependency. Relative links/assets must work on a GitHub Pages project path.
 4. Both classes have a clearly separate, directly reachable **Road to 60** checklist; use Do first / If you’re already there / Skip. Professions show skill versus character level and costs distinctly.
 5. Use the supplied seed, keep prose concise, and include explicit source links. Don’t add unrelated items or features. Keep the visible sample entries editable as simple data, with no duplicated rendering code.
+6. Protection Paladin's optional readiness reference is available at `#/paladin/protection/readiness`, stays absent from other specs, and distinguishes practical leveling-dungeon, level-60 dungeon and raid guidance from hard requirements. Its mechanics claims cite dated Forever sources and surface uncertainty; it is not a calculator.
 
 ## Seed facts (Forever · Horde)
 
@@ -21,4 +22,4 @@ Item numbers checked against Forever tooltip data on Nov 25, 2026.
 
 ## Review checklist
 
-Run local HTTP, open the default route and one direct item URL, try hover, keyboard focus/Enter/Escape, mobile tap, each tab, the Paladin spec switch, back navigation, and both Road to 60 links. Also try `#/paladin/road` and a legacy `#/paladin/<item>` link. Inspect narrow width, console errors and clickable source links. Check the seed names/stats against the links or this brief. No dependency on a specific testing framework.
+Run local HTTP, open the default route and one direct item URL, try hover, keyboard focus/Enter/Escape, mobile tap, each tab, the Paladin spec switch, back navigation, and both Road to 60 links. Also try `#/paladin/road` and a legacy `#/paladin/<item>` link. Open the Protection readiness link and its direct URL, check heading focus and current view on navigation, and confirm Retribution does not show the readiness link. Inspect narrow width, console errors and clickable source links. Check the seed names/stats against the links or this brief. No dependency on a specific testing framework.

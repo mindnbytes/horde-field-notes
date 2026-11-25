@@ -646,35 +646,13 @@ window.HORDE_FIELD_NOTES.paladin = {
       label: "Protection",
       kicker: "Paladin · Protection",
       title: "Protection Paladin",
-      lede: "Shield and threat upgrades from 20 to 60, with the level-60 readiness numbers kept separate from the gear route.",
-      scope: "Full Protection 20–60 route. Readiness notes are guidance, not a calculator or a hard requirement for leveling dungeons.",
+      lede: "Shield and threat upgrades from 20 to 60, with a separate tank readiness reference.",
+      scope: "Full Protection 20–60 route. Readiness targets are guidance, not entry requirements.",
       notesTitle: "Before you start",
       notes: [
         {
           title: "Shield and one-hander",
-          text: "Use a shield and one-hander in dungeons; keep a Retribution two-hander for solo. Stamina, armor and block are the base. Intellect matters when mana limits pulls, and spell power helps Holy threat. Fast Seal of Fury swings are fine when DPS is similar."
-        },
-        {
-          title: "Tank readiness at 60",
-          text: "440 Defense is uncrittable against level-63 bosses; 435 against level 62. From a base 300, that is 140 from gear, or 120 from gear if you have 5/5 Anticipation. Crit immunity is not crush immunity. Uncrushable combat-table coverage is Miss + Dodge + Parry + Block + 5% against level 63, not the native 4%.",
-          links: [
-            { label: "Protection Paladin guide", url: "https://conquestcapped.com/guides/wow-forever/wow-forever-protection-paladin-guide/" },
-            { label: "Method Protection gear and stats", url: "https://www.method.gg/wow-forever/class-guides/protection-paladin/bis-gear-and-stats" }
-          ]
-        },
-        {
-          title: "Why 140 Defense",
-          text: "A level-60 tank takes 5.6% incoming crit at base. Each Defense point above 300 reduces crit chance by 0.04 percentage points and raises Miss, Dodge, Parry and Block by 0.04 percentage points each, so 140 removes the boss crit. There is no uncrushable requirement for leveling dungeons.",
-          links: [
-            { label: "Protection stat priority", url: "https://www.wowhead.com/forever/guide/classes/paladin/protection/stat-priority-pve-tank" }
-          ]
-        },
-        {
-          title: "Coverage buffs",
-          text: "Holy Shield at 30 adds 30% block for 10 sec on 4 charges; Redoubt can add up to 30% block chance when it procs on a melee hit. Neither is a permanent character-sheet value, so don't count either as full-time avoidance.",
-          links: [
-            { label: "Holy Shield", url: "https://www.wowhead.com/forever/spell=20925/holy-shield" }
-          ]
+          text: "Use a shield and one-hander in dungeons; keep a Retribution two-hander for solo. Upgrade weak armor/shield and build Stamina. Intellect helps when mana limits pulls; spell power helps Holy threat."
         }
       ],
       brackets: [
@@ -1274,6 +1252,38 @@ window.HORDE_FIELD_NOTES.paladin = {
               }
             ]
           }
+        ]
+      },
+      readiness: {
+        title: "Tank readiness",
+        intro: "What to gear for in dungeons and raids, and which numbers are worth watching.",
+        groups: [
+          {
+            id: "leveling-dungeons",
+            label: "Leveling dungeons",
+            priority: "Start with a level-appropriate shield, armor and Stamina.",
+            detail: "Don't chase a Defense target while leveling. Block is useful against packs of smaller melee hits. If you run dry before the pull ends, Intellect gives you more mana; if enemies peel off you, spell power can help with Holy threat."
+          },
+          {
+            id: "level-60-dungeons",
+            label: "Level-60 dungeons",
+            priority: "Keep the sturdy shield and health pool; add Defense as you find upgrades.",
+            detail: "Check what the enemy actually does. Block chance is how often you block; block value is how much a normal block takes off the hit. Neither helps against damage you can't block. A raid Defense target isn't a dungeon entry requirement."
+          },
+          {
+            id: "raid-bosses",
+            label: "Raid bosses",
+            priority: "Gear for the boss: Defense for melee crits, armor for physical hits, Stamina for bursts.",
+            detail: "Uncrittable means the attacker can't land a melee crit; uncrushable means it can't land a crushing blow. These are separate outcomes, and the attacker's level matters: a level-63 boss is not the same check as a level-60 enemy. Check with the raid about mitigation, resistances and threat for the fight."
+          }
+        ],
+        example: "At level 60, if your sheet shows 400 Defense skill with temporary effects off, that's 40 skill short of the cited 440 boss-crit target. It doesn't tell you whether you can be crushed. Read your block chance separately: Holy Shield can run out of charges before it's ready again, and Redoubt only helps while the proc lasts. Neither is permanent coverage.",
+        mechanics: "For patch 1.60.1, the guides cite 440 total Defense skill for melee crit immunity against a level-63 boss. Method discusses a separate crush threshold based on miss, dodge, parry and block, but isn't sure Protection can sustain it. These are gearing references, not universal requirements or proof of how every raid boss behaves.",
+        links: [
+          { label: "Method Forever Protection stats (updated 2026-11-20)", url: "https://www.method.gg/wow-forever/class-guides/protection-paladin/bis-gear-and-stats#stat-prio" },
+          { label: "Forever Protection stat guide (updated 2026-10-28)", url: "https://www.wowhead.com/forever/guide/classes/paladin/protection/stat-priority-pve-tank" },
+          { label: "Holy Shield spell", url: "https://www.wowhead.com/forever/spell=20925/holy-shield" },
+          { label: "Redoubt talent", url: "https://www.wowhead.com/forever/spell=20127/redoubt" }
         ]
       }
     }
