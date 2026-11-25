@@ -27,6 +27,8 @@ The Rogue now has a full Combat 20–60 gear route with 20–29, 30–39 and 40�
 
 ## Content data
 
+Enchanting and Tailoring keep the existing guide-root Gold-making view and add a directly linkable Leveling view at `#/enchanting/leveling` and `#/tailoring/leveling`. Both views share native navigation; the leveling route is stored in an optional `leveling` data object and rendered by the shared app.
+
 Each file in `data/` assigns one guide object to `window.HORDE_FIELD_NOTES[id]`. Items and road entries use stable slug `id`s; guides without specs keep using one flat `items` and `road` pair.
 
 A guide may declare specs as an optional list, with shared routing fields on the guide:

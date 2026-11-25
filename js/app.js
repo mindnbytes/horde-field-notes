@@ -268,6 +268,10 @@
       return { guideId: guideId, specId: null, view: "road", itemId: roadItemId };
     }
 
+    if (sub === "leveling" && guide.leveling && !parts[1]) {
+      return { guideId: guideId, specId: null, view: "leveling", itemId: null };
+    }
+
     var simpleItem = findItem(guide, sub);
 
     if (simpleItem) {
@@ -426,12 +430,15 @@
     syncNav(route.guideId);
 
     var isRoad = route.view === "road";
+    var isLeveling = route.view === "leveling";
     var isReadiness = route.view === "readiness";
-    var viewLabel = isRoad ? currentGuide.title + " · " + currentGuide.road.title :
-      (isReadiness ? currentGuide.title + " · " + currentGuide.readiness.title : currentGuide.title);
+    var viewLabel = isLeveling ? currentGuide.title + " · " + currentGuide.leveling.title :
+      (isRoad ? currentGuide.title + " · " + currentGuide.road.title :
+      (isReadiness ? currentGuide.title + " · " + currentGuide.readiness.title : currentGuide.title));
 
-    mainEl.innerHTML = isRoad ? renderRoadView(currentGuide, route) :
-      (isReadiness ? renderReadinessView(currentGuide, route) : renderGearView(currentGuide, route));
+    mainEl.innerHTML = isLeveling ? renderLevelingView(currentGuide, route) :
+      (isRoad ? renderRoadView(currentGuide, route) :
+      (isReadiness ? renderReadinessView(currentGuide, route) : renderGearView(currentGuide, route)));
     document.title = viewLabel + " · Horde Field Notes";
 
     bindItems();
@@ -457,15 +464,15 @@
     }
   }
 
-  function headHtml(guide, route, title, lede) {
+  function headHtml(guide, route, title, lede, scope) {
     return (
       '<div class="guide-head">' +
         '<p class="kicker">' + escapeHtml(guide.kicker) + "</p>" +
         '<h1 class="view-title" tabindex="-1">' + escapeHtml(title) + "</h1>" +
         '<p class="lede">' + escapeHtml(lede) + "</p>" +
-        '<p class="scope"><span class="scope-label">Scope</span>' + escapeHtml(guide.scope) + "</p>" +
+        '<p class="scope"><span class="scope-label">Scope</span>' + escapeHtml(scope || guide.scope) + "</p>" +
         (guide.specs && guide.specs.length ? specNavHtml(guide, route) : "") +
-        (guide.road || guide.readiness ? subnavHtml(guide, route) : "") +
+        (guide.road || guide.readiness || guide.leveling ? subnavHtml(guide, route) : "") +
       "</div>"
     );
   }
@@ -499,7 +506,9 @@
 
     return (
       '<nav class="subnav" aria-label="' + escapeHtml(guide.navLabel || guide.title) + ' views">' +
-        '<a href="' + escapeHtml(gearHash) + '"' + (route.view === "gear" ? ' aria-current="page"' : "") + ">Gear</a>" +
+        (guide.leveling ? '<a href="#/' + escapeHtml(guide.id) + '/leveling"' + (route.view === "leveling" ? ' aria-current="page"' : "") + ">Leveling</a>" : "") +
+        '<a href="' + escapeHtml(gearHash) + '"' + (route.view === "gear" ? ' aria-current="page"' : "") + ">" +
+          (guide.leveling ? "Gold-making" : "Gear") + "</a>" +
         (guide.road ? '<a href="' + escapeHtml(roadHash) + '"' + (route.view === "road" ? ' aria-current="page"' : "") + ">Road to 60</a>" : "") +
         (guide.readiness ? '<a href="' + escapeHtml(gearHash) + '/readiness"' + (route.view === "readiness" ? ' aria-current="page"' : "") + ">Tank readiness</a>" : "") +
       "</nav>"
@@ -654,6 +663,26 @@
       headHtml(guide, route, guide.road.title, guide.road.intro) +
       '<div class="road-groups">' + guide.road.groups.map(renderRoadGroup).join("") + "</div>"
     );
+  }
+
+  function renderLevelingView(guide, route) {
+    var leveling = guide.leveling;
+    return headHtml(guide, route, leveling.title, leveling.intro, "Horde · Profession skill 1–300.") +
+      (leveling.before ? '<section class="guide-notes"><h2 class="notes-heading">Before you go</h2><div class="note-list">' +
+        leveling.before.map(function (note) { return '<div class="guide-note"><h3 class="note-title">' + escapeHtml(note.title) +
+          '</h3><p class="note-text">' + escapeHtml(note.text) + '</p>' +
+          (note.links ? '<div class="source-links road-links">' + linkList(note.links) + '</div>' : '') +
+          '</div>'; }).join('') + '</div></section>' : '') +
+      '<div class="road-groups">' + leveling.groups.map(function (group) {
+        return '<section class="road-group" aria-labelledby="leveling-' + escapeHtml(group.id) + '">' +
+          '<div class="road-group-head"><h2 id="leveling-' + escapeHtml(group.id) + '">' + escapeHtml(group.label) +
+          '</h2></div>' +
+          (group.steps ? '<ol class="leveling-steps road-text">' + group.steps.map(function (step) {
+            return '<li><strong>' + escapeHtml(step[0]) + '</strong> · ' + escapeHtml(step[1]) + '</li>';
+          }).join("") + '</ol>' : '') +
+          (group.text ? '<p class="road-text">' + escapeHtml(group.text) + '</p>' : '') +
+          (group.links ? '<div class="source-links">' + linkList(group.links) + '</div>' : '') + '</section>';
+      }).join('') + '</div>';
   }
 
   function renderReadinessView(guide, route) {

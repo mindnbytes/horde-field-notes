@@ -19,6 +19,38 @@ window.HORDE_FIELD_NOTES.tailoring = {
     { title: "WATCH LATER · Mageweave bags", text: "The 14-slot Red Mageweave Bag is a general upgrade; the 12-slot Mageweave Reagent Bag serves a narrower crafting audience. Compare similar listings and ask for a buyer before spending on a pattern or stock." },
     { title: "Price one bag before you craft", text: "Example, not actual rates: 2g sale − 10s fee − 1g 20s in materials − 10s for lost deposits and a share of the pattern cost = 60s before your time. Value self-farmed cloth at what you could sell it for. Count either the bolts or the cloth used to make them, not both.", links: [{ label: "Forever bolt recipes", url: "https://wowforevertalents.com/professions/tailoring/smaller-headings/#reagents" }] }
   ],
+  leveling: {
+    title: "Leveling Tailoring",
+    intro: "Use trainer recipes through 225 and save your bolts for the next craft. Ranges are suggested switch points, not learning requirements. Buy in small batches: yellow and green crafts can take extra attempts.",
+    before: [
+      { title: "Rank checkpoints", text: "Apprentice cap 75. Journeyman: 50 skill and character level 10, cap 150 (Snang, Orgrimmar). Expert: 125 skill and level 20, cap 225 (Magar, Orgrimmar). Artisan: 200 skill and level 35, cap 300 (Daryl Stack, Tarren Mill). Character level and profession skill are separate gates.", links: [{ label: "Method · Forever ranks/trainers", url: "https://www.method.gg/wow-forever/tailoring-in-wow-forever-1-300-leveling-guide-and-trainers" }] },
+      { title: "Trainer-first through 225", text: "The route through 225 intentionally uses trainer recipes. No special pattern shopping is needed for those stages; check the trainer when a recipe is due and stop if it is unavailable." }
+    ],
+    groups: [
+      { id: "tailoring-linen", label: "1–80 · Linen and Wool", steps: [
+        ["1–45 Bolt of Linen Cloth", "2 Linen Cloth per bolt"],
+        ["45–55 Heavy Linen Gloves", "2 Bolts of Linen Cloth + 1 Coarse Thread"],
+        ["55–80 Bolt of Woolen Cloth", "3 Wool Cloth per bolt; train Journeyman before continuing past 75"]
+      ], links: [{ label: "Forever bolt inputs", url: "https://wowforevertalents.com/professions/tailoring/smaller-headings/#reagents" }, { label: "Forever Heavy Linen Gloves recipe", url: "https://wowforevertalents.com/professions/tailoring/gloves/#r-3840" }] },
+      { id: "tailoring-wool-silk", label: "80–150 · Wool, Silk, Mageweave", steps: [
+        ["80–100 Wool crafts", "Woolen Cape → Gray Woolen Shirt → Double-Stitched Woolen Shoulders. Use the next trainer recipe as it opens."],
+        ["100–120 Bolt of Silk Cloth", "4 Silk Cloth per bolt; the last few points may take more crafts"],
+        ["120–140 Silk crafts", "Azure Silk Hood → Small Silk Pack; save Heavy Leather for the packs"],
+        ["140–150 Bolt of Mageweave", "5 Mageweave Cloth per bolt"]
+      ], links: [{ label: "Forever bolt inputs", url: "https://wowforevertalents.com/professions/tailoring/smaller-headings/#reagents" }, { label: "Method route and subranges", url: "https://www.method.gg/wow-forever/tailoring-in-wow-forever-1-300-leveling-guide-and-trainers" }] },
+      { id: "tailoring-silk-mageweave", label: "150–225 · Silk to Mageweave Bag", steps: [
+        ["150–190 Crimson Silk Vest → Crimson Silk Pantaloons", "Both use 4 Bolts of Silk Cloth and 2 Red Dye. Add 2 Fine Thread for the vest or 2 Silken Thread for the pantaloons."],
+        ["190–215 Black Mageweave Gloves", "2 Bolts of Mageweave + 2 Heavy Silken Thread"],
+        ["215–225 Mageweave Bag", "4 Bolts of Mageweave + 2 Silken Thread. This is the plain trainer bag, not Red Mageweave or the Reagent Bag."]
+      ], text: "Train Artisan at Tarren Mill before you hit 225.", links: [{ label: "Forever Tailoring recipe index", url: "https://wowforevertalents.com/professions/tailoring/" }] },
+      { id: "tailoring-runecloth", label: "225–300 · Conditional Runecloth route", steps: [
+        ["225–240 Runecloth Belt", "Trainer recipe; 3 Bolts of Runecloth + 1 Rune Thread."],
+        ["240–250 Runecloth Gloves", "Learn at 230; 4 bolts + 4 Rugged Leather + 1 Rune Thread. Bind on Pickup pattern listed at Qia in Everlook for 1g 60s before discounts; check stock."],
+        ["250–280 Runecloth Headband", "Learn at 250; 4 bolts + 2 Ironweb Spider Silk + 1 Rune Thread. Pattern is listed as a drop or chest find, not a trainer recipe."],
+        ["280–300 Runecloth Shoulders", "Learn at 260; 7 bolts + 2 Ironweb Spider Silk + 4 Rugged Leather + 1 Rune Thread. Check pattern access first; turns green at 290."]
+      ], text: "Method did not test this stretch on beta. If you already have the Shoulders pattern, compare extending Gloves to 260 to skip buying Headband. If you can't get the final pattern at a reasonable price, pause rather than stockpiling Runecloth. Each bolt takes 5 Runecloth.", links: [{ label: "Runecloth Belt recipe", url: "https://wowforevertalents.com/professions/tailoring/belts/#r-18402" }, { label: "Runecloth Gloves recipe", url: "https://wowforevertalents.com/professions/tailoring/gloves/#r-18417" }, { label: "Runecloth Headband recipe", url: "https://wowforevertalents.com/professions/tailoring/hoods/#r-18444" }, { label: "Runecloth Shoulders recipe", url: "https://wowforevertalents.com/professions/tailoring/spaulders/#r-18449" }, { label: "Reported Qia vendor source", url: "https://bindonforever.com/item/14481" }, { label: "Reported Headband pattern sources", url: "https://bindonforever.com/item/14498" }, { label: "Reported Shoulders pattern sources", url: "https://bindonforever.com/item/14504" }] }
+    ]
+  },
   items: [
     {
       id: "red-woolen-bag",
