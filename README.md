@@ -4,7 +4,7 @@ A quick-reference site for **WoW Forever · Horde**. Open it beside the game, pi
 
 ## Design
 
-- Top-level destinations: **Rogue**, **Paladin**, **Blacksmithing**, **Enchanting**. Rogue starts with Combat; Paladin starts with Protection. Retribution can be added under Paladin when its content is ported.
+- Top-level destinations: **Rogue**, **Paladin**, **Blacksmithing**, **Enchanting**. Rogue starts with Combat; Paladin starts with Retribution and switches to Protection inside the tab. Both Paladin specs have a full 20–60 route.
 - Leveling picks are curated, affordable targets, not exhaustive BiS lists. Show when an item is worth pursuing separately from minimum quest pickup, minimum equip level, and profession skill. Label quest rewards, boss drops, and vendor gates.
 - Give classes a separate **Road to 60** checklist: Do first / If you’re already there / Skip. Make it directly reachable. Favor quest rewards and colocated upgrades over low-probability farms.
 - **Stats are local content, not a live Wowhead tooltip.** Hover or focus the named item control to see its type, damage/speed/DPS or armor/block, bonuses and effects, where known. Click, tap or press Enter/Space for persistent stats and acquisition details. External sources are optional links, not required to read the answer.
@@ -23,7 +23,39 @@ Open <http://127.0.0.1:8000/>. No package install or build needed. If port 8000 
 
 ## Current slice
 
-The Rogue now has a full Combat 20–60 gear route with 20–29, 30–39 and 40–49 brackets, a short before-you-start note, and a 50–60 Road to 60 checklist. Protection Paladin and the two professions remain first-slice examples. This is still a prototype for the other guides, not complete coverage everywhere.
+The Rogue now has a full Combat 20–60 gear route with 20–29, 30–39 and 40–49 brackets, a short before-you-start note, and a 50–60 Road to 60 checklist. Paladin is now dual spec: Retribution is the default and both it and Protection have 20–29, 30–39 and 40–49 gear cards plus their own 50–60 Road to 60 checklist. The two professions remain first-slice examples. This is still a prototype for the other guides, not complete coverage everywhere.
+
+## Content data
+
+Each file in `data/` assigns one guide object to `window.HORDE_FIELD_NOTES[id]`. Items and road entries use stable slug `id`s; guides without specs keep using one flat `items` and `road` pair.
+
+A guide may declare specs as an optional list, with shared routing fields on the guide:
+
+```js
+window.HORDE_FIELD_NOTES.paladin = {
+  id: "paladin",
+  navLabel: "Paladin",
+  navDetail: "Retribution · Protection",
+  defaultSpec: "retribution",
+  legacyRoadSpec: "protection", // keeps #/paladin/road on the Protection road
+  specs: [
+    {
+      id: "retribution",
+      label: "Retribution",
+      kicker: "Paladin · Retribution",
+      title: "Retribution Paladin",
+      lede: "…",
+      scope: "…",
+      placeholder: "…", // optional note when items is empty
+      items: [/* same item shape as other guides */],
+      road: { /* optional Road to 60 shape */ }
+    },
+    { id: "protection", label: "Protection", /* … */ }
+  ]
+};
+```
+
+Each spec owns its `kicker`, `title`, `lede`, `scope`, `sectionTitle`, `notes`, `notesTitle`, `brackets`, `items`, `road` and `placeholder`. The guide keeps `id`, `navLabel`, `navDetail`, `specs`, `defaultSpec` and `legacyRoadSpec`, so routes stay stable when content moves between specs. Routes are `#/<guide>` for the default spec's gear, `#/<guide>/<spec>` for another spec, `#/<guide>/<spec>/road[/<item>]` for a checklist, and `#/<guide>/<spec>/<item>` for an entry. Older links to `#/paladin/<item>` and `#/paladin/road` are resolved to the owning spec and rewritten in the address bar.
 
 Future content ideas are tracked in [the backlog](docs/backlog.md).
 

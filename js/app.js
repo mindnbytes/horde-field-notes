@@ -61,54 +61,288 @@
     return null;
   }
 
+  function findSpec(guide, specId) {
+    var specs = guide.specs || [];
+
+    for (var index = 0; index < specs.length; index += 1) {
+      if (specs[index].id === specId) {
+        return specs[index];
+      }
+    }
+
+    return null;
+  }
+
+  function defaultSpecId(guide) {
+    if (guide.defaultSpec) {
+      return guide.defaultSpec;
+    }
+    if (guide.specs && guide.specs.length) {
+      return guide.specs[0].id;
+    }
+    return null;
+  }
+
+  // A spec owns its content and names; shared fields (id, navLabel, specs and
+  // routing hints) always come from the guide so routes stay stable.
+  var SPEC_OWNED_FIELDS = [
+    "kicker", "title", "lede", "scope", "sectionTitle",
+    "notes", "notesTitle", "brackets", "items", "road", "placeholder"
+  ];
+
+  function guideForSpec(guide, specId) {
+    if (!guide.specs || !guide.specs.length) {
+      return guide;
+    }
+
+    var spec = findSpec(guide, specId || defaultSpecId(guide));
+
+    if (!spec) {
+      return guide;
+    }
+
+    var view = {};
+
+    Object.keys(guide).forEach(function (key) {
+      view[key] = guide[key];
+    });
+
+    SPEC_OWNED_FIELDS.forEach(function (key) {
+      delete view[key];
+    });
+
+    Object.keys(spec).forEach(function (key) {
+      if (key !== "id" && key !== "label") {
+        view[key] = spec[key];
+      }
+    });
+
+    view.specId = spec.id;
+    view.specLabel = spec.label;
+    return view;
+  }
+
+  function parseSpecRoute(guide, parts) {
+    var guideId = guide.id;
+    var defaultId = defaultSpecId(guide);
+    var first = parts[0] || "";
+
+    function invalid(specId) {
+      return {
+        guideId: guideId,
+        specId: specId || defaultId,
+        view: "gear",
+        itemId: null,
+        invalid: true
+      };
+    }
+
+    if (!first) {
+      return { guideId: guideId, specId: defaultId, view: "gear", itemId: null };
+    }
+
+    // Legacy links used the guide root for its original road checklist. Keep
+    // #/paladin/road working by pinning it to the guide's legacyRoadSpec.
+    if (first === "road") {
+      var legacyId = guide.legacyRoadSpec || defaultId;
+      var legacySpec = findSpec(guide, legacyId) || findSpec(guide, defaultId);
+
+      if (!legacySpec || !legacySpec.road) {
+        return invalid(defaultId);
+      }
+
+      var legacyItem = parts[1] || null;
+
+      if (legacyItem && !findItem(legacySpec, legacyItem)) {
+        return invalid(legacySpec.id);
+      }
+
+      return {
+        guideId: guideId,
+        specId: legacySpec.id,
+        explicitSpec: true,
+        view: "road",
+        itemId: legacyItem,
+        alias: true
+      };
+    }
+
+    var spec = findSpec(guide, first);
+
+    if (spec) {
+      var sub = parts[1] || "";
+
+      if (!sub) {
+        return { guideId: guideId, specId: spec.id, explicitSpec: true, view: "gear", itemId: null };
+      }
+
+      if (sub === "road" && spec.road) {
+        var roadItem = parts[2] || null;
+
+        if (roadItem && !findItem(spec, roadItem)) {
+          return invalid(spec.id);
+        }
+
+        return {
+          guideId: guideId,
+          specId: spec.id,
+          explicitSpec: true,
+          view: "road",
+          itemId: roadItem
+        };
+      }
+
+      if (!parts[2] && findItem(spec, sub)) {
+        var specItem = findItem(spec, sub);
+
+        // Items that live only on the checklist still need a working deep link.
+        if (spec.brackets && spec.brackets.length && !specItem.bracketId &&
+            roadHasItem(spec.road, specItem.id)) {
+          return {
+            guideId: guideId,
+            specId: spec.id,
+            explicitSpec: true,
+            view: "road",
+            itemId: sub,
+            alias: true
+          };
+        }
+
+        return {
+          guideId: guideId,
+          specId: spec.id,
+          explicitSpec: true,
+          view: "gear",
+          itemId: sub
+        };
+      }
+
+      return invalid(spec.id);
+    }
+
+    // Older item links pointed straight at the guide root. Find the spec that
+    // owns the item so pasted links still open the matching entry.
+    if (!parts[1]) {
+      for (var index = 0; index < guide.specs.length; index += 1) {
+        var ownerSpec = guide.specs[index];
+        var ownerItem = findItem(ownerSpec, first);
+
+        if (ownerItem) {
+          var ownerRoadOnly = ownerSpec.brackets && ownerSpec.brackets.length &&
+            !ownerItem.bracketId && roadHasItem(ownerSpec.road, ownerItem.id);
+
+          return {
+            guideId: guideId,
+            specId: ownerSpec.id,
+            explicitSpec: true,
+            view: ownerRoadOnly ? "road" : "gear",
+            itemId: first,
+            alias: true
+          };
+        }
+      }
+    }
+
+    return invalid(defaultId);
+  }
+
+  function parseSimpleRoute(guide, parts) {
+    var guideId = guide.id;
+    var sub = parts[0] || "";
+
+    if (!sub) {
+      return { guideId: guideId, specId: null, view: "gear", itemId: null };
+    }
+
+    if (sub === "road" && guide.road) {
+      var roadItemId = parts[1] || null;
+
+      if (roadItemId && !findItem(guide, roadItemId)) {
+        return { guideId: guideId, specId: null, view: "gear", itemId: null, invalid: true };
+      }
+
+      return { guideId: guideId, specId: null, view: "road", itemId: roadItemId };
+    }
+
+    var simpleItem = findItem(guide, sub);
+
+    if (simpleItem) {
+      if (guide.brackets && guide.brackets.length && !simpleItem.bracketId &&
+          roadHasItem(guide.road, simpleItem.id)) {
+        return {
+          guideId: guideId,
+          specId: null,
+          view: "road",
+          itemId: sub,
+          alias: true
+        };
+      }
+
+      return { guideId: guideId, specId: null, view: "gear", itemId: sub };
+    }
+
+    return { guideId: guideId, specId: null, view: "gear", itemId: null, invalid: true };
+  }
+
   function parseRoute() {
     var raw = window.location.hash.replace(/^#\/?/, "").trim();
 
     if (!raw) {
-      return { guideId: DEFAULT_GUIDE, view: "gear", itemId: null, blank: true };
+      return { guideId: DEFAULT_GUIDE, specId: null, view: "gear", itemId: null, blank: true };
     }
 
     var parts = raw.split("/").filter(Boolean);
     var guideId = parts[0];
 
     if (!hasGuide(guideId)) {
-      return { guideId: DEFAULT_GUIDE, view: "gear", itemId: null, invalid: true };
+      return { guideId: DEFAULT_GUIDE, specId: null, view: "gear", itemId: null, invalid: true };
     }
 
     var guide = DATA[guideId];
-    var sub = parts[1] || "";
 
-    if (!sub) {
-      return { guideId: guideId, view: "gear", itemId: null };
-    }
+    return guide.specs && guide.specs.length
+      ? parseSpecRoute(guide, parts.slice(1))
+      : parseSimpleRoute(guide, parts.slice(1));
+  }
 
-    if (sub === "road" && guide.road) {
-      var roadItemId = parts[2] || null;
+  function guideGearHash(guide, route) {
+    var specSegment = "";
 
-      if (roadItemId && !findItem(guide, roadItemId)) {
-        return { guideId: guideId, view: "gear", itemId: null, invalid: true };
+    if (guide.specs && guide.specs.length && route.specId) {
+      if (route.specId !== defaultSpecId(guide) || route.explicitSpec) {
+        specSegment = "/" + route.specId;
       }
-
-      return { guideId: guideId, view: "road", itemId: roadItemId };
     }
 
-    var selectedItem = findItem(guide, sub);
+    return "#/" + route.guideId + specSegment;
+  }
 
-    if (selectedItem) {
-      return { guideId: guideId, view: "gear", itemId: sub };
-    }
+  function guideRoadHash(guide, route) {
+    var specSegment = guide.specs && guide.specs.length && route.specId
+      ? "/" + route.specId
+      : "";
 
-    return { guideId: guideId, view: "gear", itemId: null, invalid: true };
+    return "#/" + route.guideId + specSegment + "/road";
+  }
+
+  function guideItemHash(guide, route, itemId) {
+    var specSegment = guide.specs && guide.specs.length && route.specId
+      ? "/" + route.specId
+      : "";
+
+    return "#/" + route.guideId + specSegment + "/" + itemId;
   }
 
   function routeHash(route) {
+    var guide = DATA[route.guideId];
+
     if (route.view === "road") {
-      return "#/" + route.guideId + "/road" + (route.itemId ? "/" + route.itemId : "");
+      return guideRoadHash(guide, route) + (route.itemId ? "/" + route.itemId : "");
     }
     if (route.itemId) {
-      return "#/" + route.guideId + "/" + route.itemId;
+      return guideItemHash(guide, route, route.itemId);
     }
-    return "#/" + route.guideId;
+    return guideGearHash(guide, route);
   }
 
   function replaceHash(hash) {
@@ -175,7 +409,7 @@
     hidePreview();
 
     currentRoute = route;
-    currentGuide = DATA[route.guideId];
+    currentGuide = guideForSpec(DATA[route.guideId], route.specId);
     itemsById = new Map();
 
     (currentGuide.items || []).forEach(function (item) {
@@ -187,7 +421,9 @@
     var isRoad = route.view === "road";
     var viewLabel = isRoad ? currentGuide.title + " · " + currentGuide.road.title : currentGuide.title;
 
-    mainEl.innerHTML = isRoad ? renderRoadView(currentGuide) : renderGearView(currentGuide);
+    mainEl.innerHTML = isRoad
+      ? renderRoadView(currentGuide, route)
+      : renderGearView(currentGuide, route);
     document.title = viewLabel + " · Horde Field Notes";
 
     bindItems();
@@ -213,33 +449,60 @@
     }
   }
 
-  function headHtml(guide, activeView, title, lede) {
+  function headHtml(guide, route, title, lede) {
     return (
       '<div class="guide-head">' +
         '<p class="kicker">' + escapeHtml(guide.kicker) + "</p>" +
         '<h1 class="view-title" tabindex="-1">' + escapeHtml(title) + "</h1>" +
         '<p class="lede">' + escapeHtml(lede) + "</p>" +
         '<p class="scope"><span class="scope-label">Scope</span>' + escapeHtml(guide.scope) + "</p>" +
-        (guide.road ? subnavHtml(guide, activeView) : "") +
+        (guide.specs && guide.specs.length ? specNavHtml(guide, route) : "") +
+        (guide.road ? subnavHtml(guide, route) : "") +
       "</div>"
     );
   }
 
-  function subnavHtml(guide, activeView) {
+  // Native links, not a tab widget: each spec has its own stable URL and the
+  // current one is marked with aria-current.
+  function specNavHtml(guide, route) {
+    var links = guide.specs.map(function (spec) {
+      var isDefault = spec.id === defaultSpecId(guide);
+      var href = "#/" + guide.id + (isDefault ? "" : "/" + spec.id);
+
+      return (
+        '<a href="' + escapeHtml(href) + '"' +
+          (spec.id === route.specId ? ' aria-current="page"' : "") + ">" +
+          escapeHtml(spec.label) +
+        "</a>"
+      );
+    }).join("");
+
     return (
-      '<nav class="subnav" aria-label="' + escapeHtml(guide.navLabel || guide.title) + ' views">' +
-        '<a href="#/' + guide.id + '"' + (activeView === "gear" ? ' aria-current="page"' : "") + ">Gear</a>" +
-        '<a href="#/' + guide.id + '/road"' + (activeView === "road" ? ' aria-current="page"' : "") + ">Road to 60</a>" +
+      '<nav class="spec-nav" aria-label="' + escapeHtml(guide.navLabel || guide.title) + ' specialization">' +
+        '<span class="spec-nav-label">Spec</span>' +
+        links +
       "</nav>"
     );
   }
 
-  function renderGearView(guide) {
+  function subnavHtml(guide, route) {
+    var gearHash = guideGearHash(guide, route);
+    var roadHash = guideRoadHash(guide, route);
+
     return (
-      headHtml(guide, "gear", guide.title, guide.lede) +
+      '<nav class="subnav" aria-label="' + escapeHtml(guide.navLabel || guide.title) + ' views">' +
+        '<a href="' + escapeHtml(gearHash) + '"' + (route.view === "gear" ? ' aria-current="page"' : "") + ">Gear</a>" +
+        '<a href="' + escapeHtml(roadHash) + '"' + (route.view === "road" ? ' aria-current="page"' : "") + ">Road to 60</a>" +
+      "</nav>"
+    );
+  }
+
+  function renderGearView(guide, route) {
+    return (
+      headHtml(guide, route, guide.title, guide.lede) +
       notesHtml(guide) +
       renderGearItems(guide) +
-      (guide.road ? roadCallout(guide) : "")
+      (guide.road ? roadCallout(guide, route) : "")
     );
   }
 
@@ -269,6 +532,19 @@
   }
 
   function renderGearItems(guide) {
+    if (!guide.items || !guide.items.length) {
+      return (
+        '<section class="content-section" aria-labelledby="gear-heading">' +
+          '<div class="section-head">' +
+            '<h2 id="gear-heading">' + escapeHtml(guide.sectionTitle || "Gear") + "</h2>" +
+          "</div>" +
+          (guide.placeholder
+            ? '<p class="placeholder-note">' + escapeHtml(guide.placeholder) + "</p>"
+            : "") +
+        "</section>"
+      );
+    }
+
     if (guide.brackets && guide.brackets.length) {
       var bracketSections = renderBracketSections(guide);
 
@@ -364,9 +640,9 @@
     );
   }
 
-  function renderRoadView(guide) {
+  function renderRoadView(guide, route) {
     return (
-      headHtml(guide, "road", guide.road.title, guide.road.intro) +
+      headHtml(guide, route, guide.road.title, guide.road.intro) +
       '<div class="road-groups">' + guide.road.groups.map(renderRoadGroup).join("") + "</div>"
     );
   }
@@ -541,7 +817,7 @@
     );
   }
 
-  function roadCallout(guide) {
+  function roadCallout(guide, route) {
     return (
       '<aside class="road-callout">' +
         "<div>" +
@@ -549,7 +825,7 @@
           "<h2>Road to 60</h2>" +
           "<p>Do first, if you're already there, and skip.</p>" +
         "</div>" +
-        '<a class="button-link" href="#/' + guide.id + '/road">Open Road to 60 <span aria-hidden="true">→</span></a>' +
+        '<a class="button-link" href="' + escapeHtml(guideRoadHash(guide, route)) + '">Open Road to 60 <span aria-hidden="true">→</span></a>' +
       "</aside>"
     );
   }
@@ -654,11 +930,13 @@
       label.textContent = open ? "Hide details" : "View details";
     }
 
-    if (options.updateHash !== false && currentRoute) {
-      var baseHash = "#/" + currentRoute.guideId + (currentRoute.view === "road" ? "/road" : "");
+    if (options.updateHash !== false && currentRoute && currentGuide) {
+      var baseHash = currentRoute.view === "road"
+        ? guideRoadHash(currentGuide, currentRoute)
+        : guideGearHash(currentGuide, currentRoute);
 
       if (open) {
-        var itemHash = baseHash + "/" + article.dataset.itemId;
+        var itemHash = guideItemHash(currentGuide, currentRoute, article.dataset.itemId);
 
         if (currentRoute.itemId) {
           replaceHash(itemHash);
@@ -836,14 +1114,44 @@
     }, 160);
   }
 
+  function roadHasItem(road, itemId) {
+    if (!road || !road.groups) {
+      return false;
+    }
+
+    return road.groups.some(function (group) {
+      return (group.entries || []).some(function (entry) {
+        return entry.itemId === itemId;
+      });
+    });
+  }
+
   function handleRoute(options) {
     var route = parseRoute();
 
-    if (route.blank || route.invalid) {
+    // A road URL may name a gear item that has no card on that checklist.
+    // Open its gear entry instead of rendering a road page that ignores it.
+    if (route.view === "road" && route.itemId) {
+      var roadGuide = guideForSpec(DATA[route.guideId], route.specId);
+
+      if (!roadHasItem(roadGuide.road, route.itemId) && findItem(roadGuide, route.itemId)) {
+        route = {
+          guideId: route.guideId,
+          specId: route.specId,
+          explicitSpec: true,
+          view: "gear",
+          itemId: route.itemId,
+          alias: true
+        };
+      }
+    }
+
+    if (route.blank || route.invalid || route.alias) {
       replaceHash(routeHash(route));
     }
 
     if (currentRoute && route.guideId === currentRoute.guideId &&
+        route.specId === currentRoute.specId &&
         route.view === "gear" && currentRoute.view === "gear" && !route.itemId) {
       hidePreview();
       closeOpenItems();
