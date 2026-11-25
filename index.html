@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Horde Field Notes · WoW Forever</title>
+    <meta name="description" content="A compact local field guide to Horde gear, quests and professions in WoW Forever.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2312100d'/%3E%3Cpath d='M9 9h14v3H9zm0 6h9v3H9zm0 6h14v3H9z' fill='%23d9a54b'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <div class="shell">
+      <header class="site-header">
+        <a class="brand" href="#/rogue">
+          <span class="brand-name">Horde Field Notes</span>
+          <span class="brand-sub">WoW Forever · Horde</span>
+        </a>
+        <p class="tagline">What to get next, where it starts, and why.</p>
+      </header>
+
+      <nav class="guide-nav" id="guide-nav" aria-label="Guides"></nav>
+
+      <main id="main" class="site-main">
+        <noscript>
+          <p class="noscript">This field guide renders its local data with JavaScript. Enable JavaScript to read the gear notes and checklists.</p>
+        </noscript>
+      </main>
+
+      <footer class="site-footer">
+        <p>Prototype first slice. Seed facts checked against Forever data on Nov 25, 2026.</p>
+        <p>Stats are local. Source links are optional references and open on another site.</p>
+      </footer>
+    </div>
+
+    <div id="stat-preview" class="stat-preview" aria-hidden="true" hidden></div>
+
+    <script src="data/rogue.js" defer></script>
+    <script src="data/paladin.js" defer></script>
+    <script src="data/blacksmithing.js" defer></script>
+    <script src="data/enchanting.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </body>
+</html>
