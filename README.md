@@ -23,11 +23,11 @@ Open <http://127.0.0.1:8000/>. No package install or build needed. If port 8000 
 
 ## Current slice
 
-The Rogue now has a full Combat 20–60 gear route with 20–29, 30–39 and 40–49 brackets, a short before-you-start note, and a 50–60 Road to 60 checklist. Paladin is dual spec: Retribution is the default and both specs have gear cards and a Road to 60 checklist. Protection also has a separately linkable, qualitative Tank readiness reference at `#/paladin/protection/readiness`; it is not a calculator or an encounter guarantee. Enchanting and Tailoring have small Gold-making test/watch examples; they are hypotheses, not guaranteed sales. Blacksmithing remains a future expansion. This is still a prototype, not complete coverage everywhere.
+The Rogue now has a full Combat 20–60 gear route with 20–29, 30–39 and 40–49 brackets, a short before-you-start note, and a 50–60 Road to 60 checklist. Paladin is dual spec: Retribution is the default and both specs have gear cards and a Road to 60 checklist. Protection also has a separately linkable, qualitative Tank readiness reference at `#/paladin/protection/readiness`; it is not a calculator or an encounter guarantee. Blacksmithing has a cost-conscious 1–300 route, with late plans to price before buying, and a small Gold-making guide. Enchanting and Tailoring also have Gold-making test/watch examples. The sales ideas are hypotheses; this is still a prototype.
 
 ## Content data
 
-Enchanting and Tailoring keep the existing guide-root Gold-making view and add a directly linkable Leveling view at `#/enchanting/leveling` and `#/tailoring/leveling`. Both views share native navigation; the leveling route is stored in an optional `leveling` data object and rendered by the shared app.
+Blacksmithing, Enchanting and Tailoring use the guide root for Gold-making and have directly linkable Leveling views at `#/blacksmithing/leveling`, `#/enchanting/leveling` and `#/tailoring/leveling`. Both views share native navigation; the leveling route is stored in an optional `leveling` data object and rendered by the shared app. The original Blacksmithing plan stays at `#/blacksmithing/mithril-warhammer`.
 
 Each file in `data/` assigns one guide object to `window.HORDE_FIELD_NOTES[id]`. Items and road entries use stable slug `id`s; guides without specs keep using one flat `items` and `road` pair.
 
