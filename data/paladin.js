@@ -789,7 +789,7 @@ window.HORDE_FIELD_NOTES.paladin = {
           bracket: "20–29",
           chips: ["Quest reward", "Blackfathom Deeps"],
           source: "Blackfathom Deeps · Blackfathom Villainy",
-          reason: "Guaranteed quest shield with Stamina, Spirit and Frost resistance; pair it with Outlaw Sabre if you still need a sword.",
+          reason: "Guaranteed quest shield with Stamina, Spirit and Frost resistance; Outlaw Sabre is a separate quest reward, so the two do not compete.",
           stats: [
             { label: "Type", value: "Shield" },
             { label: "Armor", value: "642" },
@@ -804,6 +804,7 @@ window.HORDE_FIELD_NOTES.paladin = {
             { label: "Quest available", value: "Level 18" },
             { label: "Start", value: "Argent Guard Thaelrid, early alcove in Blackfathom Deeps" },
             { label: "Turn in", value: "Head of Kelris to Bashana Runetotem, Thunder Bluff" },
+            { label: "Reward choice", value: "Arctic Buckler or Gravestone Scepter" },
             { label: "Equip requirement", value: "No separate equip gate listed" }
           ],
           acquisition: [
@@ -817,14 +818,15 @@ window.HORDE_FIELD_NOTES.paladin = {
             },
             {
               label: "Choose",
-              text: "Choose Arctic Buckler. The same quest gives a sword option, Outlaw Sabre, if that is the bigger upgrade."
+              text: "Choose Arctic Buckler over Gravestone Scepter. Outlaw Sabre is not a competing reward: it comes from the separate Baron Aquanis quest (6922) if you still need a sword."
             }
           ],
-          caution: "One quest reward. If you still need a main hand, compare Outlaw Sabre before taking the shield.",
+          caution: "Only the Arctic Buckler or Gravestone Scepter choice is exclusive. The separate Baron Aquanis quest can still give you Outlaw Sabre.",
           links: [
             { label: "Arctic Buckler item", url: "https://www.wowhead.com/forever/item=7002" },
             { label: "Blackfathom Villainy", url: "https://www.wowhead.com/forever/quest=6561" },
-            { label: "Outlaw Sabre reference", url: "https://www.wowhead.com/forever/item=16886/outlaw-sabre" }
+            { label: "Baron Aquanis (Horde)", url: "https://www.wowhead.com/forever/quest=6922/baron-aquanis" },
+            { label: "Outlaw Sabre item", url: "https://www.wowhead.com/forever/item=16886/outlaw-sabre" }
           ]
         },
         {
@@ -1218,14 +1220,15 @@ window.HORDE_FIELD_NOTES.paladin = {
       ],
       road: {
         title: "Road to 60",
-        intro: "Add mitigation only where the shield slot is weak, and take late drops on runs you already need. Skip farming a full tank set before 60.",
+        intro: "Prioritize the Focal Sword if it is still missing, add mitigation only where the shield slot is weak, and take late drops on runs you already need. Skip farming a full tank set before 60.",
         groups: [
           {
             id: "do-first",
             tone: "do",
             label: "Do first",
-            hint: "The late shield upgrade if Blackmaw Hold is already on the route.",
+            hint: "The 45+ Maraudon weapon first; take the late shield only if Blackmaw Hold is already on the route.",
             entries: [
+              { itemId: "inventors-focal-sword" },
               { itemId: "bloodfur-bulwark" }
             ]
           },

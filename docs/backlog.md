@@ -1,5 +1,13 @@
 # Later additions
 
+## Protection guide source note
+
+- The Arctic Buckler reward-choice correction and Focal Sword Road priority are implemented. The Focal Sword's existing stats remain unchanged by user direction despite a source disagreement documented in [class gear research](research-class-gear.md).
+
+## Rogue and Paladin gear expansion
+
+- Evaluate the shared **For The Horde!** UBRS trinket choice first, including the tradeoff for a dual-spec Paladin; then consider colocated drops and other candidates in [class gear research](research-class-gear.md). Verify remaining acquisition details before implementation; do not turn conditional drops into mandatory farms.
+
 ## Protection Paladin: tank readiness by content
 
 Implemented as `#/paladin/protection/readiness`, adjacent to Gear and Road to 60. It covers **leveling dungeons**, **level-60 dungeons**, and **raid bosses**, with a character-sheet example and separate notes on temporary block.
@@ -17,6 +25,8 @@ Blacksmithing, Enchanting and Tailoring have compact Gold-making test/watch cand
 ## Endgame gold-making — research and add
 
 Explore and add level-60 gold-making picks to the existing **Blacksmithing**, **Enchanting**, and **Tailoring** guides. Start with a shortlist of Forever · Horde recipes: utility crafts or consumables for Blacksmithing, dungeon and raid enchant commissions for Enchanting, and bags or other endgame utility crafts for Tailoring. Add only candidates with a clear buyer or repeat use.
+
+Research and prioritized candidates are saved in [profession gold research](research-profession-gold.md). First evaluate Mooncloth and specialty bags, Enchanted Leather and a shield enchant service, and Dark Iron fire-resistance crafts; validate the marked gaps and market locally before implementation. Keep expensive auction-house epics outside this slice.
 
 - Verify recipe sources, skill and character-level gates, reputation or specialization requirements, cooldowns, binding, and exact materials and outputs against Forever sources.
 - Compare customer-material commissions with selling finished goods where possible. Include recipe unlock cost, material value, fees, and how to test demand with one order or small batch.
